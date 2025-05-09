@@ -1,23 +1,47 @@
 <?php 
-if(isset($_POST["autenticar"])){
+define("ROL_ADMIN", "admin");
+define("ROL_MEDICO", "medico");
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once("logica/Admin.php");
+require_once("logica/Medico.php");
+
+if (isset($_POST["autenticar"])) {
     $correo = $_POST["correo"];
     $clave = $_POST["clave"];
+
     $admin = new Admin("", "", "", $correo, $clave);
-    if($admin -> autenticar()){
-        $_SESSION["id"] = $admin -> getId();
+    if ($admin->autenticar()) {
+        session_regenerate_id(true);
+        $_SESSION["id"] = $admin->getId();
+        $_SESSION["rol"] = ROL_ADMIN;
         header("Location: ?pid=" . base64_encode("presentacion/sesionAdmin.php"));
-    }else {
-        $medico = new Medico("", "", "", $correo, $clave);
-        if($medico -> autenticar()){
-            $_SESSION["id"] = $medico -> getId();
-            header("Location: ?pid=" . base64_encode("presentacion/sesionMedico.php"));
-        }else{
-            echo "Mensaje de error";
-        }
+        exit();
     }
+
+    $medico = new Medico("", "", "", $correo, $clave);
+    if ($medico->autenticar()) {
+        session_regenerate_id(true);
+        $_SESSION["id"] = $medico->getId();
+        $_SESSION["rol"] = ROL_MEDICO;
+        header("Location: ?pid=" . base64_encode("presentacion/sesionMedico.php"));
+        exit();
+    }
+
+    echo "Correo o clave incorrectos.";
 }
+
 ?>
 <body class="bg-light">
+	<?php if (isset($_GET['mensaje'])): ?>
+		<div class="alert alert-warning text-center" role="alert">
+			<?php echo htmlspecialchars($_GET['mensaje']); ?>
+		</div>
+	<?php endif; ?>
+
 	<div class="container py-4">
 		<div class="row align-items-center">
 			<div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
