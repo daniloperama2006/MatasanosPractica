@@ -29,7 +29,17 @@ class CitaDAO{
         return $sentencia;
     }
     
-    
+    public function consultarCitasEstados($rol, $id){
+        if($rol == "admin"){
+            $sentencia = "select c.idCita, c.fecha, c.hora, p.idPaciente, p.nombre, p.apellido, m.idMedico, m.nombre, m.apellido, con.idConsultorio, con.nombre, c.EstadoCita_idEstadoCita, ec.valor
+                from EstadoCita ec join Cita c on ec.idEstadoCita = c.EstadoCita_idEstadoCita
+                			join Paciente p on c.Paciente_idPaciente = p.idPaciente
+                            join Medico m on c.Medico_idMedico = m.idMedico
+                            join Consultorio con on c.Consultorio_idConsultorio = con.idConsultorio
+                            ORDER BY c.idCita";  
+        }
+        return $sentencia;
+    }
     
 }
 

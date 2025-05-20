@@ -46,4 +46,7 @@ include ("presentacion/menu" . ucfirst($rol) . ".php");
 		</div>
 	</div>
 </div>
+<?php
+	include("presentacion/cita/editarCita.php");
+?>
 </body>

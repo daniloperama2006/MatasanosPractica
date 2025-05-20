@@ -40,6 +40,7 @@ $paginas_con_autenticacion = array(
     "presentacion/sesionMedico.php",
     "presentacion/sesionPaciente.php",
     "presentacion/cita/consultarCita.php",
+    "presentacion/cita/editarCita.php",
 );
 
 
