@@ -31,8 +31,25 @@ class PacienteDAO{
     }
 
     public function buscar($filtro){
-        return "select p.idPaciente, p.nombre, p.apellido, p.correo
-                from Paciente p
-                where p.nombre like '%" . $filtro . "%' or p.apellido like '%" . $filtro . "%'";
+        $sql = "SELECT p.idPaciente, p.nombre, p.apellido, p.correo FROM Paciente p WHERE ";
+        
+        $filtroNormalizado = trim(mb_strtolower($filtro, 'UTF-8')); 
+        $tokens = explode(' ', $filtroNormalizado);
+        
+        $condiciones = [];
+        foreach ($tokens as $token) {
+            if (!empty($token)) { 
+                $condiciones[] = "(LOWER(p.nombre) LIKE '%" . $token . "%' OR LOWER(p.apellido) LIKE '%" . $token . "%' OR LOWER(CONCAT(p.nombre, ' ', p.apellido)) LIKE '%" . $token . "%')";
+                }
+        }
+        
+        
+        if (count($condiciones) > 0) {
+            $sql .= implode(" AND ", $condiciones); 
+        } else {
+            return "SELECT p.idPaciente, p.nombre, p.apellido, p.correo FROM Paciente p WHERE 0"; 
+        }
+        
+        return $sql;
     }
 }
